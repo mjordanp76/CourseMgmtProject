@@ -1,9 +1,11 @@
 package Boundary;
 
+import Control.DBConnector;
+import Control.LoginControl;
 import Control.StartController;
+
+import javafx.application.Platform;
 import javafx.geometry.HPos;
-// import javafx.application.Platform;
-// import javafx.application.Application;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.geometry.Rectangle2D;
@@ -19,14 +21,16 @@ import javafx.stage.Stage;
 
 public class LoginForm {
 
-    private StartController controller;
-    private VBox loginPane;
+    private LoginControl loginControl;
+    private Stage stage;
+    private Label errorLabel;
 
-    public LoginForm(StartController controller) {
-        this.controller = controller;
+    public LoginForm(DBConnector dbConnector) {
+        this.loginControl = new LoginControl(dbConnector, this);
     }
 
     public void show(Stage stage) {
+        this.stage = stage;
         // grid pane holds the login components (labels, fields, button)
         GridPane loginPane = new GridPane();
         loginPane.setPadding(new Insets(0));
@@ -87,7 +91,11 @@ public class LoginForm {
         inputFields.setAlignment(Pos.CENTER);
 
         Button loginButton = new Button("Submit");
-        loginButton.setOnAction(e -> handleLogin(userNameField.getText(), passwordField.getText()));
+        loginButton.setOnAction(e -> submit(userNameField.getText(), passwordField.getText()));
+
+        // error for incorrect usn/pwd
+        errorLabel = new Label();
+        errorLabel.setStyle("-fx-text-fill: red;");
 
         // Add items to grid
         // (col#, row#)
@@ -95,10 +103,12 @@ public class LoginForm {
         loginPane.add(fieldLabels, 0, 1);
         loginPane.add(inputFields, 1, 1);
         loginPane.add(loginButton, 1, 2);
+        loginPane.add(errorLabel, 0, 3, 3, 1);
 
-        // center title and button
+        // center title, button, and error message
         GridPane.setHalignment(titleLabel, HPos.CENTER);
         GridPane.setHalignment(loginButton, HPos.CENTER);
+        GridPane.setHalignment(errorLabel, HPos.CENTER);
         
         // set preferred width/height of grid pane
         //loginPane.setPrefSize(400, Region.USE_COMPUTED_SIZE);
@@ -123,8 +133,23 @@ public class LoginForm {
         stage.show();
     }
 
-    private void handleLogin(String usn, String pwd) {
-        // TODO: authenticate with DB
+    public void submit(String usn, String pwd) {
+        boolean success = loginControl.login(usn, pwd);
+
+        if (success) {
+            System.out.println("Successful login!"); // for now; change to display menu later
+            close();
+        } else {
+            System.out.println("Invalid username or password.");
+        }
         System.out.println("Attempted login: " + usn);
+    }
+
+    public void displayError(String message) {
+        Platform.runLater(() -> errorLabel.setText(message));
+    }
+
+    public void close() {
+        Platform.runLater(()-> stage.close());
     }
 }
