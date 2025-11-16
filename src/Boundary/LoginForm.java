@@ -25,9 +25,9 @@ public class LoginForm {
     private Stage stage;
     private Label errorLabel;
 
-    public LoginForm(DBConnector dbConnector) {
-        this.loginControl = new LoginControl(dbConnector, this);
-    }
+    // public LoginForm(DBConnector dbConnector) {
+    //     this.loginControl = new LoginControl(dbConnector, this);
+    // }
 
     public void show(Stage stage) {
         this.stage = stage;

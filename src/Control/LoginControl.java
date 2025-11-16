@@ -1,6 +1,10 @@
 package Control;
 
+import Boundary.ClassView;
 import Boundary.LoginForm;
+import Boundary.RegistrationForm;
+import Boundary.StudentMenu;
+import Boundary.TeacherMenu;
 import Entity.Account;
 
 import java.util.regex.Pattern;
@@ -12,10 +16,15 @@ public class LoginControl {
     
     private DBConnector db;
     private LoginForm loginForm;
+    private StudentMenu studentMenu;
+    private RegistrationForm registrationForm;
+    private TeacherMenu teacherMenu;
+    private ClassView classView;
     
-    public LoginControl(DBConnector dbConnector, LoginForm loginForm) {
+    // change StudentMenu studentMenu back to LoginForm loginForm when done
+    public LoginControl(DBConnector dbConnector, ClassView classView) {
         this.db = dbConnector;
-        this.loginForm = loginForm;
+        this.teacherMenu = teacherMenu;
     }
 
     public boolean login(String usn, String pwd) {
