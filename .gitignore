@@ -1,0 +1,16 @@
+# Java / IDE files
+*.class
+*.log
+*.tmp
+*.bak
+*.swp
+
+# VSCode settings
+.vscode/
+
+# SQLite database file
+CourseMgmtDB.db
+
+# Java build folders
+bin/
+out/
