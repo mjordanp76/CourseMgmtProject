@@ -22,18 +22,18 @@ public class LoginControl {
         this.loginForm = loginForm;
     }
 
-    public boolean login(String usn, String pwd) {
+    public Account login(String usn, String pwd) {
         // validate input
         if(!validate(usn, pwd)) {
             loginForm.displayError("Username must be an email address.");
-            return false;
+            return null;
         }
 
         // get user account
         Account account = dbConnector.getUser(usn);
         if (account == null) {
             loginForm.displayError("User not found.");
-            return false;
+            return null;
         }
 
         // hash the entered password
@@ -43,9 +43,9 @@ public class LoginControl {
         if (authenticate(hashedPW, account)) {
             //dbConnector.saveLogin(usn);
             //System.out.println("Successful login! Login saved to database."); // TODO: maybe move this message to saveLogin()
-            return true;
+            return account;
         } else {
-            return false;
+            return null;
         }
     }
 

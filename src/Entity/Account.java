@@ -45,6 +45,10 @@ public class Account {
         return lName;
     }
 
+    public String getFullName() {
+        return fName + " " + lName;
+    }
+
     public void setDept(String dept) {
         this.dept = dept;
     }

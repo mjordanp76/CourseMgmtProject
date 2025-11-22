@@ -1,6 +1,8 @@
 package Boundary;
 
 import Control.LoginControl;
+import Control.StartController;
+import Entity.Account;
 
 import javafx.application.Platform;
 import javafx.scene.control.Label;
@@ -13,10 +15,13 @@ public class LoginForm {
     private Label errorLabel;
     private LoginControl loginControl;
     private Stage primaryStage;
+    private StartController startController;
+    private Account account;
 
-    public LoginForm(LoginControl loginControl, Stage primaryStage) {
+    public LoginForm(LoginControl loginControl, Stage primaryStage, StartController startController) {
         this.loginControl = loginControl;
         this.primaryStage = primaryStage;
+        this.startController = startController;
     }
 
     public void display() {
@@ -31,11 +36,12 @@ public class LoginForm {
 
     // submit button action
     public void submit(String usn, String pwd) {
-        boolean success = loginControl.login(usn, pwd);
+        Account account = loginControl.login(usn, pwd);
 
-        if (success) {
+        if (account != null) {
             System.out.println("Successful login!");
-            primaryStage.close(); // close login form after successful login
+            startController.onLoginSuccess(account);
+            //primaryStage.close(); // close login form after successful login
         } else {
         System.out.println("Attempted login from: " + usn);
         }
