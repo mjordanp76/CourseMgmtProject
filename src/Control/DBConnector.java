@@ -67,6 +67,30 @@ public class DBConnector {
         }
     }
 
+    public void saveLogin(String usn) {
+        String findAccountIdQuery = "SELECT accountID FROM Account WHERE usn = ?";
+        String insertSessionQuery = "INSERT INTO Session (accountID, event, time) VALUES (?, ?, datetime('now'))";
+
+        try (PreparedStatement findStmt = conn.prepareStatement(findAccountIdQuery)) {
+            findStmt.setString(1, usn);
+            ResultSet rs = findStmt.executeQuery();
+
+            if (rs.next()) {
+                int accountID = rs.getInt("accountID");
+
+                try (PreparedStatement insertStmt = conn.prepareStatement(insertSessionQuery)) {
+                    insertStmt.setInt(1, accountID);
+                    insertStmt.setString(2, "login");
+                    insertStmt.executeUpdate();
+                }
+            } else {
+                System.err.println("saveLogin: Username not found: " + usn);
+            }
+        } catch (SQLException e) {
+            System.err.println("saveLogin failed: " + e.getMessage());
+        }
+    }
+
     // public List<Course> getCourses(String usn) {
 
     // }
