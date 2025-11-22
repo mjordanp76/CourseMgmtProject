@@ -61,11 +61,11 @@ public class Account {
         return role;
     }
 
-    public void setPswdHash(String pswd) {
+    public void setPwdHash(String pswd) {
         this.pswd = pswd;
     }
 
-    public String getPswdHash() {
+    public String getPwdHash() {
         return pswd;
     }
 

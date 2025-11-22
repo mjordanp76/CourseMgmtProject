@@ -26,12 +26,6 @@ public class DBConnector {
         }
     }
 
-    // Provides access to the database connection for other classes
-    public Connection getConnection() {
-        return conn;
-    }
-
-    // debugging
     public Account getUser(String usn) {
         String DbQuery = "SELECT * FROM Account WHERE usn = ?";
 
@@ -39,6 +33,7 @@ public class DBConnector {
             stmt.setString(1, usn);
             ResultSet rs = stmt.executeQuery();
 
+            // debugging output
             if (rs.next()) {
                 Account account = new Account();
                 account.setAccountID(rs.getInt("accountID"));
@@ -47,7 +42,7 @@ public class DBConnector {
                 account.setLastName(rs.getString("lname"));
                 account.setDept(rs.getString("dept"));
                 account.setRole(rs.getString("role"));
-                account.setPswdHash(rs.getString("pswd"));
+                account.setPwdHash(rs.getString("pswd"));
 
                 // debugging output
                 System.out.println("Fetched from DB: " +
@@ -71,4 +66,16 @@ public class DBConnector {
             return null;
         }
     }
+
+    // public List<Course> getCourses(String usn) {
+
+    // }
+
+    // public List<Section> getSections(String usn) {
+
+    // }
+
+    // public List<Grade> getGrades(int courseID) {
+
+    // }
 }

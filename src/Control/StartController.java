@@ -11,7 +11,7 @@ public class StartController {
 
     public StartController() {
         dbConnector = new DBConnector();
-        //loginControl = new LoginControl(dbConnector);
+        loginControl = new LoginControl(dbConnector);
     }
 
     public void initiate(Stage primaryStage) {
@@ -25,6 +25,7 @@ public class StartController {
         }
 
         LoginForm loginForm = new LoginForm(loginControl, primaryStage);
+        loginControl.setLoginForm(loginForm);
         loginForm.display();
 
         // debugging
