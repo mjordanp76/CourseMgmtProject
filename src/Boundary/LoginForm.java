@@ -41,7 +41,6 @@ public class LoginForm {
         if (account != null) {
             System.out.println("Successful login!");
             startController.onLoginSuccess(account);
-            //primaryStage.close(); // close login form after successful login
         } else {
         System.out.println("Attempted login from: " + usn);
         }
@@ -59,9 +58,5 @@ public class LoginForm {
 
     public void setErrorLabel(Label label) {
         this.errorLabel = label; // used by loginFormBuilder to inject errorLabel
-    }
-
-    public void close() {
-        primaryStage.close();
     }
 }

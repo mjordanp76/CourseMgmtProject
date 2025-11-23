@@ -1,9 +1,16 @@
 package Control;
 
+import java.util.List;
+
 import Boundary.LoginForm;
 import Boundary.MainMenu;
 import Boundary.MainMenuBuilder;
+import Boundary.TeacherMenu;
+import Boundary.StudentMenu;
 import Entity.Account;
+import Entity.Course;
+import Entity.Section;
+import javafx.collections.FXCollections;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
 import javafx.scene.control.Label;
@@ -49,26 +56,30 @@ public class StartController {
         MainMenuBuilder builder = new MainMenuBuilder();
 
         // 2. Create the main menu wrapper
-        MainMenu mainMenu = new MainMenu(builder);
+        MainMenu mainMenu = new MainMenu(builder, primaryStage);
 
         // 3. Set the user's displayed name
         mainMenu.setName(account.getFullName());
 
-        // // 4. TEST: create a dummy content node
-        // VBox dummyContent = new VBox();
-        // dummyContent.getChildren().add(new Label("This is the test content area."));
-        // dummyContent.setSpacing(10);
-
-        // // 5. Show the dashboard view (this will show the name and logout button)
-        // mainMenu.showDashboardView(dummyContent);
-
-        4. Create the student/teacher menu
-        if (account.isTeacher()) {
+        // START HERE IN THE MORNING!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+        // 4. Create the student/teacher menu
+        if (account.getRole().equals("teacher")) {
             TeacherMenu teacherMenu = new TeacherMenu(mainMenu);
             mainMenu.showDashboardView(teacherMenu.getDashboardTables());
         } else {
             StudentMenu studentMenu = new StudentMenu(mainMenu);
+
+            // Fetch data
+            List<Course> availableCourses = dbConnector.getCourses();
+            List<Section> currentSchedule = dbConnector.getenrolledSections();
+
+            // Populate tables
+            studentMenu.getCourseTable().setItems(FXCollections.observableArrayList(availableCourses));
+            studentMenu.getEnrolledTable().setItems(FXCollections.observableArrayList(currentSchedule));
+
+            // Show tables
             mainMenu.showDashboardView(studentMenu.getDashboardTables());
+
         }
 
         // 5. Display it on the stage
