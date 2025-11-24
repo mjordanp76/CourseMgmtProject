@@ -1,6 +1,7 @@
 package Boundary;
 
 import Entity.Course;
+import Entity.Section;
 
 import javafx.geometry.Pos;
 import javafx.scene.Node;
@@ -9,6 +10,7 @@ import javafx.scene.control.Label;
 import javafx.scene.control.TableCell;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
+import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.layout.VBox;
 import javafx.util.Callback;
 
@@ -21,20 +23,14 @@ public class TeacherMenuBuilder {
         dashboardVBox.setAlignment(Pos.TOP_CENTER);
     }
 
-    public VBox buildDashboard(Node firstTableContent, Node secondTableContent) {
-        // Wrap the first table node in a VBox with a title
-        Label table1Title = new Label("My Courses");
-        table1Title.setStyle("-fx-font-size: 16; -fx-font-weight: bold;");
-        VBox table1Box = new VBox(5, table1Title, firstTableContent);
-        table1Box.setAlignment(Pos.TOP_CENTER);
+    public VBox buildDashboard(TableView<Course> sectionTable) {
+        // Wrap the table node in a VBox with a title
+        Label tableTitle = new Label("My Courses");
+        tableTitle.setStyle("-fx-font-size: 16; -fx-font-weight: bold;");
+        VBox tableBox = new VBox(5, tableTitle, sectionTable);
+        tableBox.setAlignment(Pos.TOP_CENTER);
 
-        // Wrap the second table node in a VBox with a title
-        Label table2Title = new Label("Course Schedule");
-        table2Title.setStyle("-fx-font-size: 16; -fx-font-weight: bold;");
-        VBox table2Box = new VBox(5, secondTableContent);
-        table2Box.setAlignment(Pos.TOP_CENTER);
-
-        dashboardVBox.getChildren().setAll(table1Box, table2Box);
+        dashboardVBox.getChildren().setAll(tableBox);
 
         return dashboardVBox;
     }
@@ -44,59 +40,22 @@ public class TeacherMenuBuilder {
     }
 
     // Helper method to create the first table with "Select" buttons
-    public TableView<Course> createCourseTable() {
-        TableView<Course> table = new TableView<>();
+    public TableView<Section> createSectionTable() {
+        TableView<Section> table = new TableView<>();
 
-        TableColumn<Course, String> colCourseNumber = new TableColumn<>("Course Number");
-        TableColumn<Course, String> colCourseName = new TableColumn<>("Course Name");
-        TableColumn<Course, Void> colSelect = new TableColumn<>("");
+        TableColumn<Section, String> colCourseName = new TableColumn<>("Class Name");
+        TableColumn<Section, String> colCourseStatus = new TableColumn<>("Status");
+        TableColumn<Section, Void> colSelect = new TableColumn<>("View/Update");
 
-        colCourseNumber.setPrefWidth(160);
-        colCourseName.setPrefWidth(480);
-        colSelect.setPrefWidth(160);
+        colCourseName.setPrefWidth(250);
+        colCourseStatus.setPrefWidth(250);
+        colSelect.setPrefWidth(250);
 
-        // Create dummy "Select" buttons (behavior will be set later in StudentMenu)
-        Callback<TableColumn<Course, Void>, TableCell<Course, Void>> cellFactory = param -> new TableCell<>() {
-            private final Button btn = new Button("Select");
+        colCourseName.setCellValueFactory(new PropertyValueFactory<>("courseNum"));
+        colCourseStatus.setCellValueFactory(new PropertyValueFactory<>("status"));
 
-            {
-                btn.setMaxWidth(Double.MAX_VALUE); // fill column
-            }
-
-            @Override
-            protected void updateItem(Void item, boolean empty) {
-                super.updateItem(item, empty);
-                if (empty) {
-                    setGraphic(null);
-                } else {
-                    setGraphic(btn);
-                }
-            }
-        };
-
-        colSelect.setCellFactory(cellFactory);
-
-        table.getColumns().addAll(colCourseNumber, colCourseName, colSelect);
-
-        return table;
-    }
-
-    // Helper method to create the second table (no buttons yet)
-    public TableView<Course> createenrolledTable() {
-        TableView<Course> table = new TableView<>();
-
-        TableColumn<Course, String> col1 = new TableColumn<>("Course Number");
-        TableColumn<Course, String> col2 = new TableColumn<>("Course Name");
-        TableColumn<Course, String> col3 = new TableColumn<>("Time");
-        TableColumn<Course, String> col4 = new TableColumn<>("Location");
-
-        col1.setPrefWidth(200);
-        col2.setPrefWidth(200);
-        col3.setPrefWidth(200);
-        col4.setPrefWidth(200);
-
-        table.getColumns().addAll(col1, col2, col3, col4);
-
+        table.getColumns().addAll(colCourseName, colCourseStatus, colSelect);
+        table.setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY);
         return table;
     }
 }

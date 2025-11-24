@@ -16,7 +16,6 @@ public class LoginForm {
     private LoginControl loginControl;
     private Stage primaryStage;
     private StartController startController;
-    private Account account;
 
     public LoginForm(LoginControl loginControl, Stage primaryStage, StartController startController) {
         this.loginControl = loginControl;

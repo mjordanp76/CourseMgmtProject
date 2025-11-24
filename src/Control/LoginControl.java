@@ -10,14 +10,15 @@ import Entity.Account;
 
 public class LoginControl {
 
-    private DBConnector dbConnector;
+    private DBConnector db;
     private LoginForm loginForm;
 
-    public LoginControl(DBConnector dbConnector) {
-        this.dbConnector = dbConnector;
+    public LoginControl(LoginForm loginForm, DBConnector db) {
+        this.loginForm = loginForm;
+        this.db = db;
     }
 
-    // this is to avoid injecting LoginForm in LoginControl constructor
+    // StartController makes loginControl before loginForm, so this injects loginForm later
     public void setLoginForm(LoginForm loginForm) {
         this.loginForm = loginForm;
     }
@@ -30,7 +31,7 @@ public class LoginControl {
         }
 
         // get user account
-        Account account = dbConnector.getUser(usn);
+        Account account = db.getUser(usn);
         if (account == null) {
             loginForm.displayError("User not found.");
             return null;
@@ -41,7 +42,7 @@ public class LoginControl {
 
         // authenticate credentials & save login
         if (authenticate(hashedPW, account)) {
-            //dbConnector.saveLogin(usn);
+            //db.saveLogin(usn);
             //System.out.println("Successful login! Login saved to database."); // TODO: maybe move this message to saveLogin()
             return account;
         } else {

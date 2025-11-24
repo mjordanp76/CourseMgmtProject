@@ -1,47 +1,49 @@
 package Boundary;
 
+import Control.SectionController;
+import Control.TeacherController;
 import Entity.Course;
+import Entity.Section;
+import Entity.Section;
 
+import java.util.List;
+import javafx.collections.FXCollections;
 import javafx.scene.Node;
 import javafx.scene.control.Button;
 import javafx.scene.control.TableCell;
 import javafx.scene.control.TableView;
 import javafx.scene.control.TableColumn;
+import javafx.scene.layout.VBox;
+import javafx.application.Platform;
 import javafx.util.Callback;
 
 public class TeacherMenu {
 
-    private StudentMenuBuilder builder;
     private MainMenu mainMenu;
+    private TeacherMenuBuilder builder;
+    private TableView<Section> sectionTable;
+    private TeacherController teacherController;
 
-    public TeacherMenu(MainMenu mainMenu) {
+    public TeacherMenu(MainMenu mainMenu, TeacherController teacherController) {
         this.mainMenu = mainMenu;
-        builder = new StudentMenuBuilder();
+        this.teacherController = teacherController;
+        builder = new TeacherMenuBuilder();
+        sectionTable = builder.createSectionTable();
     }
 
-    public Node getDashboardTables() {
-        // Create tables using the builder
-        TableView<Course> courseTable = builder.createCourseTable();
-        TableView<Course> enrolledTable = builder.createEnrolledTable();
+    public TableView<Section> getSectionTable() {
+        return sectionTable;
+    }
 
-        // Set up "Select" button actions for the first table
-        TableColumn<Course, Void> selectCol = (TableColumn<Course, Void>) courseTable.getColumns().get(2);
+    public VBox getDashboardTables() {
+        return builder.buildDashboard(sectionTable);
+    }
 
-        Callback<TableColumn<Course, Void>, TableCell<Course, Void>> cellFactory = param -> new TableCell<>() {
+    private void setupSelectColumn() {
+        TableColumn<Section, Void> selectCol = (TableColumn<Section, Void>) sectionTable.getColumns().get(2);
+
+        selectCol.setCellFactory(col -> new TableCell<>() {
             private final Button btn = new Button("Select");
-
-            {
-                btn.setMaxWidth(Double.MAX_VALUE);
-                btn.setOnAction(e -> {
-                    // Create RegistrationForm and inject it into MainMenu
-                    RegistrationForm regForm = new RegistrationForm();
-                    Node formNode = regForm.display(
-                        "Course Sections",
-                        "Select a section to register"
-                    );
-                    mainMenu.showDetailView(formNode, "Course: Dummy Course"); // replace with actual course later
-                });
-            }
 
             @Override
             protected void updateItem(Void item, boolean empty) {
@@ -50,13 +52,24 @@ public class TeacherMenu {
                     setGraphic(null);
                 } else {
                     setGraphic(btn);
+                    btn.setOnAction(e -> {
+                        System.out.print("Clicked!");
+                        Section Section = getTableView().getItems().get(getIndex());
+                        teacherController.openRegistrationForm(Section);
+                    });
                 }
             }
-        };
+        });
+    }
 
-        selectCol.setCellFactory(cellFactory);
+    public void populateTables(List<Section> teacherSections) {
+        sectionTable.setItems(FXCollections.observableArrayList(teacherSections));
+        Platform.runLater(this::setupSelectColumn);
+    }
 
-        // Return the dashboard VBox with both tables
-        return builder.buildDashboard(courseTable, enrolledTable);
+    // Called by controller to refresh tables after registration
+    public void updateTables(List<Section> teacherSections) {
+        sectionTable.setItems(FXCollections.observableArrayList(teacherSections));
+        Platform.runLater(this::setupSelectColumn);
     }
 }

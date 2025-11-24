@@ -1,5 +1,6 @@
 package Boundary;
 
+import Control.CourseController;
 import Entity.Course;
 import Entity.Section;
 
@@ -10,10 +11,9 @@ import javafx.scene.control.TableCell;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.layout.VBox;
-import javafx.util.Callback;
+import javafx.application.Platform;
 
 import java.util.List;
-import java.util.function.Consumer;
 
 public class StudentMenu {
 
@@ -21,19 +21,14 @@ public class StudentMenu {
     private StudentMenuBuilder builder;
     private TableView<Course> courseTable;
     private TableView<Section> enrolledTable;
+    private CourseController courseController;
 
-    private Consumer<Course> onCourseSelected;
-
-    public StudentMenu(MainMenu mainMenu) {
-        //this.mainMenu = mainMenu;
+    public StudentMenu(MainMenu mainMenu, CourseController courseController) {
+        this.mainMenu = mainMenu;
+        this.courseController = courseController;
         builder = new StudentMenuBuilder();
         courseTable = builder.createCourseTable();
         enrolledTable = builder.createEnrolledTable();
-        
-    }
-
-    public void setOnCourseSelected(Consumer<Course> callback) {
-        this.onCourseSelected = callback;
     }
 
     public TableView<Course> getCourseTable() {
@@ -48,39 +43,40 @@ public class StudentMenu {
         return builder.buildDashboard(courseTable, enrolledTable);
     }
 
-    private void setupSelectButtons(TableView<Course> courseTable) {
+    private void setupSelectColumn() {
         TableColumn<Course, Void> selectCol = (TableColumn<Course, Void>) courseTable.getColumns().get(2);
 
         selectCol.setCellFactory(col -> new TableCell<>() {
             private final Button btn = new Button("Select");
 
-            {
-                btn.setOnAction(e -> {
-                    RegistrationForm regForm = new RegistrationForm();
-                    Node formNode = regForm.display(
-                        "Course Sections",
-                        "Select a section to register"
-                    );
-                    mainMenu.showDetailView(formNode, "Course: TODO");
-                });
-            }
-
             @Override
             protected void updateItem(Void item, boolean empty) {
                 super.updateItem(item, empty);
-                setGraphic(empty ? null : btn);
+                if (empty) {
+                    setGraphic(null);
+                } else {
+                    setGraphic(btn);
+                    btn.setOnAction(e -> {
+                        System.out.print("Clicked!");
+                        Course course = getTableView().getItems().get(getIndex());
+                        courseController.openRegistrationForm(course);
+                    });
+                }
             }
         });
     }
 
+
     public void populateTables(List<Course> availableCourses, List<Section> enrolledSections) {
         courseTable.setItems(FXCollections.observableArrayList(availableCourses));
         enrolledTable.setItems(FXCollections.observableArrayList(enrolledSections));
+        Platform.runLater(this::setupSelectColumn);
     }
 
     // Called by controller to refresh tables after registration
     public void updateTables(List<Course> availableCourses, List<Section> enrolledSections) {
         courseTable.setItems(FXCollections.observableArrayList(availableCourses));
         enrolledTable.setItems(FXCollections.observableArrayList(enrolledSections));
+        Platform.runLater(this::setupSelectColumn);
     }
 }

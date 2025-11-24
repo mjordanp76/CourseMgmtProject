@@ -99,6 +99,18 @@ public class DBConnector {
         }
     }
 
+    public void saveLogout(int accountID, String event) {
+        String insertLogoutQuery = "INSERT INTO Session (accountID, event, time) VALUES (?, ?, datetime('now'))";
+
+        try (PreparedStatement saveStmt = conn.prepareStatement(insertLogoutQuery)) {
+            saveStmt.setInt(1, accountID);
+            saveStmt.setString(2, event);
+            saveStmt.executeUpdate();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+
     public List<Course> getCourses() {
         List<Course> courses = new ArrayList<>();
         System.out.println(currentAccountID); // debugging
@@ -132,9 +144,9 @@ public class DBConnector {
         }
 
         System.out.println("DEBUG: getCourses returned " + courses.size() + " courses:");
-    for (Course c : courses) {
-        System.out.println("  ID: " + c.getCourseID() + ", Number: " + c.getCourseNum() + ", Name: " + c.getCourseName());
-    }
+        for (Course c : courses) {
+            System.out.println("  ID: " + c.getCourseID() + ", Number: " + c.getCourseNum() + ", Name: " + c.getCourseName());
+        }
         return courses;
     }
 
@@ -192,9 +204,16 @@ public class DBConnector {
                 s.setSectionLetter(letter);
                 s.setTime(time);
                 s.setLocation(location);
+
+                sections.add(s);
             }
         } catch (SQLException e) {
             e.printStackTrace();
+        }
+
+        System.out.println("DEBUG: getSections returned " + sections.size() + " sections:");
+        for (Section s : sections) {
+            System.out.println("  ID: " + s.getSectionID() + ", Section: " + s.getSectionLetter() + ", Time: " + s.getTime() + ", Location: " + s.getLocation());
         }
         return sections;
     }
@@ -204,11 +223,12 @@ public class DBConnector {
     // }
 
     public void registerStudentForSection(int accountID, int sectionID) {
-        String sql = "INSERT INTO Enrollment (accountID, sectionID VALUES (?, ?)";
+        String sql = "INSERT INTO Enrollment (accountID, sectionID, status) VALUES (?, ?, ?)";
 
         try (PreparedStatement stmt = conn.prepareStatement(sql)) {
             stmt.setInt(1, accountID);
             stmt.setInt(2, sectionID);
+            stmt.setString(3, "registered");
             stmt.executeUpdate();
         } catch (SQLException e) {
             e.printStackTrace();

@@ -1,9 +1,11 @@
 package Boundary;
 
+import Entity.Course;
 import Entity.Section;
 
 import javafx.geometry.Pos;
 import javafx.scene.Node;
+import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.TableCell;
@@ -29,10 +31,11 @@ public class RegistrationFormBuilder {
         tableDescriptionLabel = new Label();
         tableDescriptionLabel.setStyle("-fx-font-size: 14;");
 
-        tableView = new TableView<>();
+        //tableView = new TableView<>();
     }
 
-    public VBox buildForm(String title, String description) {
+    public VBox buildForm(String title, String description, TableView<Section> table) {
+        // rootVBox.getChildren().addAll(table);
 
         tableTitleLabel.setText(title);
         tableDescriptionLabel.setText(description);
@@ -50,9 +53,47 @@ public class RegistrationFormBuilder {
         colRegister.setPrefWidth(150);
 
         // Dummy "Register" buttons
-        Callback<TableColumn<Section, Void>, TableCell<Section, Void>> cellFactory = param -> new TableCell<>() {
-            private final Button btn = new Button("Register");
+        // Callback<TableColumn<Section, Void>, TableCell<Section, Void>> cellFactory = param -> new TableCell<>() {
+        //     private final Button btn = new Button("Register");
 
+        //     {
+        //         btn.setMaxWidth(Double.MAX_VALUE);
+        //     }
+
+        //     @Override
+        //     protected void updateItem(Void item, boolean empty) {
+        //         super.updateItem(item, empty);
+        //         if (empty) {
+        //             setGraphic(null);
+        //         } else {
+        //             setGraphic(btn);
+        //         }
+        //     }
+        // };
+        // colRegister.setCellFactory(cellFactory);
+
+        //tableView.getColumns().setAll(colSection, colTime, colLocation, colRegister);
+
+        rootVBox.getChildren().setAll(tableTitleLabel, tableDescriptionLabel, table);
+
+        return rootVBox;
+    }
+
+    public TableView<Section> createSectionTable() {
+        TableView<Section> table = new TableView<>();
+
+        TableColumn<Section, String> letterCol = new TableColumn<>("Section");
+        letterCol.setCellValueFactory(new PropertyValueFactory<>("sectionID"));
+
+        TableColumn<Section, String> timeCol = new TableColumn<>("Time");
+        timeCol.setCellValueFactory(new PropertyValueFactory<>("time"));
+
+        TableColumn<Section, String> locationCol = new TableColumn<>("Location");
+        locationCol.setCellValueFactory(new PropertyValueFactory<>("location"));
+
+        TableColumn<Section, Void> regCol = new TableColumn<>("");
+        regCol.setCellFactory(col -> new TableCell<>() {
+            private final Button btn = new Button("Register");
             {
                 btn.setMaxWidth(Double.MAX_VALUE);
             }
@@ -62,18 +103,29 @@ public class RegistrationFormBuilder {
                 super.updateItem(item, empty);
                 if (empty) {
                     setGraphic(null);
-                } else {
-                    setGraphic(btn);
+                    return;
                 }
+
+                btn.setOnAction(e -> {
+                    // trigger callback stored inside RegistrationForm
+                    Section section = getTableView().getItems().get(getIndex());
+                    RegistrationForm parent = (RegistrationForm) btn.getScene().getRoot().getUserData();
+                    if (parent != null) {
+                        parent.triggerRegister(section);
+                    }
+                });
+                setGraphic(btn);
             }
-        };
-        colRegister.setCellFactory(cellFactory);
+        });
 
-        tableView.getColumns().setAll(colSection, colTime, colLocation, colRegister);
+        letterCol.setPrefWidth(150);
+        timeCol.setPrefWidth(250);
+        locationCol.setPrefWidth(250);
+        regCol.setPrefWidth(150);
 
-        rootVBox.getChildren().setAll(tableTitleLabel, tableDescriptionLabel, tableView);
-
-        return rootVBox;
+        table.getColumns().addAll(letterCol, timeCol, locationCol, regCol);
+        table.setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY);
+        return table;
     }
 
     // Getters for potential future use

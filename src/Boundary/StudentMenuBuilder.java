@@ -57,32 +57,11 @@ public class StudentMenuBuilder {
         colCourseName.setPrefWidth(480);
         colSelect.setPrefWidth(160);
 
-        colCourseNumber.setCellValueFactory(new PropertyValueFactory<>("courseNum")); // matches getCourseNumber()
-        colCourseName.setCellValueFactory(new PropertyValueFactory<>("courseName")); // matches getName() or getCourseName()
-
-        // Create dummy "Select" buttons (behavior will be set later in StudentMenu)
-        Callback<TableColumn<Course, Void>, TableCell<Course, Void>> cellFactory = param -> new TableCell<>() {
-            private final Button btn = new Button("Select");
-
-            {
-                btn.setMaxWidth(Double.MAX_VALUE); // fill column
-            }
-
-            @Override
-            protected void updateItem(Void item, boolean empty) {
-                super.updateItem(item, empty);
-                if (empty) {
-                    setGraphic(null);
-                } else {
-                    setGraphic(btn);
-                }
-            }
-        };
-
-        colSelect.setCellFactory(cellFactory);
+        colCourseNumber.setCellValueFactory(new PropertyValueFactory<>("courseNum"));
+        colCourseName.setCellValueFactory(new PropertyValueFactory<>("courseName"));
 
         table.getColumns().addAll(colCourseNumber, colCourseName, colSelect);
-
+        table.setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY);
         return table;
     }
 
