@@ -27,6 +27,10 @@ public class MainMenu {
         builder.getNameLabel().setText(name);
     }
 
+    public void setDept(String dept) {
+        builder.getDeptLabel().setText(dept);
+    }
+
     public void showDashboardView(Node tables) {
         builder.buildDashboard(tables);
     }

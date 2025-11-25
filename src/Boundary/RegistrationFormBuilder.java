@@ -1,11 +1,13 @@
 package Boundary;
 
 import Entity.Course;
+import Entity.GradeList;
 import Entity.Section;
 
 import javafx.geometry.Pos;
 import javafx.scene.Node;
 import javafx.scene.control.cell.PropertyValueFactory;
+import javafx.scene.control.cell.TextFieldTableCell;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.TableCell;
@@ -52,28 +54,6 @@ public class RegistrationFormBuilder {
         colLocation.setPrefWidth(150);
         colRegister.setPrefWidth(150);
 
-        // Dummy "Register" buttons
-        // Callback<TableColumn<Section, Void>, TableCell<Section, Void>> cellFactory = param -> new TableCell<>() {
-        //     private final Button btn = new Button("Register");
-
-        //     {
-        //         btn.setMaxWidth(Double.MAX_VALUE);
-        //     }
-
-        //     @Override
-        //     protected void updateItem(Void item, boolean empty) {
-        //         super.updateItem(item, empty);
-        //         if (empty) {
-        //             setGraphic(null);
-        //         } else {
-        //             setGraphic(btn);
-        //         }
-        //     }
-        // };
-        // colRegister.setCellFactory(cellFactory);
-
-        //tableView.getColumns().setAll(colSection, colTime, colLocation, colRegister);
-
         rootVBox.getChildren().setAll(tableTitleLabel, tableDescriptionLabel, table);
 
         return rootVBox;
@@ -83,19 +63,34 @@ public class RegistrationFormBuilder {
         TableView<Section> table = new TableView<>();
 
         TableColumn<Section, String> letterCol = new TableColumn<>("Section");
-        letterCol.setCellValueFactory(new PropertyValueFactory<>("sectionID"));
+        letterCol.setCellValueFactory(new PropertyValueFactory<>("courseAndSection"));
+        letterCol.setCellFactory(col -> {
+            TableCell<Section, String> cell = new TextFieldTableCell<>();
+            cell.setAlignment(Pos.CENTER);
+            return cell;
+        });
 
         TableColumn<Section, String> timeCol = new TableColumn<>("Time");
         timeCol.setCellValueFactory(new PropertyValueFactory<>("time"));
+        timeCol.setCellFactory(col -> {
+            TableCell<Section, String> cell = new TextFieldTableCell<>();
+            cell.setAlignment(Pos.CENTER);
+            return cell;
+        });
 
         TableColumn<Section, String> locationCol = new TableColumn<>("Location");
         locationCol.setCellValueFactory(new PropertyValueFactory<>("location"));
+        locationCol.setCellFactory(col -> {
+            TableCell<Section, String> cell = new TextFieldTableCell<>();
+            cell.setAlignment(Pos.CENTER);
+            return cell;
+        });
 
         TableColumn<Section, Void> regCol = new TableColumn<>("");
         regCol.setCellFactory(col -> new TableCell<>() {
             private final Button btn = new Button("Register");
             {
-                btn.setMaxWidth(Double.MAX_VALUE);
+                btn.setPrefWidth(80);
             }
 
             @Override
@@ -115,6 +110,7 @@ public class RegistrationFormBuilder {
                     }
                 });
                 setGraphic(btn);
+                setAlignment(Pos.CENTER);
             }
         });
 

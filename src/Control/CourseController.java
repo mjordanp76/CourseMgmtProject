@@ -64,7 +64,7 @@ public class CourseController {
         System.out.println("mainMenu stage = " + mainMenu);
         popUp.initOwner(mainMenu.getStage()); // keep main menu visible
         popUp.initModality(Modality.APPLICATION_MODAL); // optional: blocks main menu interaction
-        popUp.setTitle("Register for " + course.getCourseName());
+        popUp.setTitle("Sections for " + course.getCourseName());
 
         System.out.println("formRoot = " + formRoot);
         regForm.fillTable(sections);

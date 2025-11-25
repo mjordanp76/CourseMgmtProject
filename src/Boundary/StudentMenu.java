@@ -5,6 +5,7 @@ import Entity.Course;
 import Entity.Section;
 
 import javafx.collections.FXCollections;
+import javafx.geometry.Pos;
 import javafx.scene.Node;
 import javafx.scene.control.Button;
 import javafx.scene.control.TableCell;
@@ -61,6 +62,7 @@ public class StudentMenu {
                         Course course = getTableView().getItems().get(getIndex());
                         courseController.openRegistrationForm(course);
                     });
+                    setAlignment(Pos.CENTER);
                 }
             }
         });

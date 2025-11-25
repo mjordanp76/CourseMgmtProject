@@ -50,4 +50,8 @@ public class Course {
     public int getPrereq() {
         return prereq;
     }
+    
+    public String getDeptAndName() {
+        return dept + " " + courseNum;
+    }
 }

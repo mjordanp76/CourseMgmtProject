@@ -42,8 +42,8 @@ public class LoginControl {
 
         // authenticate credentials & save login
         if (authenticate(hashedPW, account)) {
-            //db.saveLogin(usn);
-            //System.out.println("Successful login! Login saved to database."); // TODO: maybe move this message to saveLogin()
+            db.saveLogin(usn);
+            System.out.println("Successful login! Login saved to database."); // TODO: maybe move this message to saveLogin()
             return account;
         } else {
             return null;

@@ -6,6 +6,7 @@ public class Section {
     private int courseID;
     private int profID;
     private int courseNum;
+    private String dept;
     private String courseName;
     private String sectionLetter;
     private String time;
@@ -47,6 +48,14 @@ public class Section {
         return courseNum;
     }
 
+    public void setDept(String dept) {
+        this.dept = dept;
+    }
+
+    public String getDept() {
+        return dept;
+    }
+
     public void setCourseName(String courseName) {
         this.courseName = courseName;
     }
@@ -85,5 +94,14 @@ public class Section {
 
     public String getStatus() {
         return status;
+    }
+
+    // combine dept, course # and section letter
+    public String getCourseAndSection() {
+        return dept + " " + courseNum + " " + sectionLetter;
+    }
+
+    public String getDeptAndNum() {
+        return dept + " " + courseNum;
     }
 }

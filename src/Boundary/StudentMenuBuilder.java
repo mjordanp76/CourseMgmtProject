@@ -11,6 +11,7 @@ import javafx.scene.control.TableCell;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.control.cell.PropertyValueFactory;
+import javafx.scene.control.cell.TextFieldTableCell;
 import javafx.scene.layout.VBox;
 import javafx.util.Callback;
 
@@ -50,15 +51,31 @@ public class StudentMenuBuilder {
         TableView<Course> table = new TableView<>();
 
         TableColumn<Course, String> colCourseNumber = new TableColumn<>("Course Number");
+        colCourseNumber.setCellValueFactory(new PropertyValueFactory<>("deptAndName"));
+        colCourseNumber.setCellFactory(col -> {
+            TableCell<Course, String> cell = new TextFieldTableCell<>();
+            cell.setAlignment(Pos.CENTER);
+            return cell;
+        });
+
         TableColumn<Course, String> colCourseName = new TableColumn<>("Course Name");
+        colCourseName.setCellValueFactory(new PropertyValueFactory<>("courseName"));
+        colCourseName.setCellFactory(col -> {
+            TableCell<Course, String> cell = new TextFieldTableCell<>();
+            cell.setAlignment(Pos.CENTER);
+            return cell;
+        });
+
         TableColumn<Course, Void> colSelect = new TableColumn<>("");
+        colSelect.setCellFactory(col -> {
+            TableCell<Course, Void> cell = new TextFieldTableCell<>();
+            cell.setAlignment(Pos.CENTER);
+            return cell;
+        });
 
         colCourseNumber.setPrefWidth(160);
         colCourseName.setPrefWidth(480);
         colSelect.setPrefWidth(160);
-
-        colCourseNumber.setCellValueFactory(new PropertyValueFactory<>("courseNum"));
-        colCourseName.setCellValueFactory(new PropertyValueFactory<>("courseName"));
 
         table.getColumns().addAll(colCourseNumber, colCourseName, colSelect);
         table.setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY);
@@ -70,15 +87,36 @@ public class StudentMenuBuilder {
         TableView<Section> table = new TableView<>();
 
         TableColumn<Section, String> col1 = new TableColumn<>("Course Number");
+        col1.setCellValueFactory(new PropertyValueFactory<>("deptAndNum"));
+        col1.setCellFactory(col -> {
+            TableCell<Section, String> cell = new TextFieldTableCell<>();
+            cell.setAlignment(Pos.CENTER);
+            return cell;
+        });
+
         TableColumn<Section, String> col2 = new TableColumn<>("Course Name");
-        TableColumn<Section, String> col3 = new TableColumn<>("Time");
-        TableColumn<Section, String> col4 = new TableColumn<>("Location");
-
-        col1.setCellValueFactory(new PropertyValueFactory<>("courseNum"));
         col2.setCellValueFactory(new PropertyValueFactory<>("courseName"));
-        col3.setCellValueFactory(new PropertyValueFactory<>("time"));
-        col4.setCellValueFactory(new PropertyValueFactory<>("location"));
+        col2.setCellFactory(col -> {
+            TableCell<Section, String> cell = new TextFieldTableCell<>();
+            cell.setAlignment(Pos.CENTER);
+            return cell;
+        });
 
+        TableColumn<Section, String> col3 = new TableColumn<>("Time");
+        col3.setCellValueFactory(new PropertyValueFactory<>("time"));
+        col3.setCellFactory(col -> {
+            TableCell<Section, String> cell = new TextFieldTableCell<>();
+            cell.setAlignment(Pos.CENTER);
+            return cell;
+        });
+
+        TableColumn<Section, String> col4 = new TableColumn<>("Location");
+        col4.setCellValueFactory(new PropertyValueFactory<>("location"));
+        col4.setCellFactory(col -> {
+            TableCell<Section, String> cell = new TextFieldTableCell<>();
+            cell.setAlignment(Pos.CENTER);
+            return cell;
+        });
 
         col1.setPrefWidth(200);
         col2.setPrefWidth(200);

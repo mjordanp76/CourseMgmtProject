@@ -2,6 +2,7 @@ package Control;
 
 import Entity.Account;
 import Entity.Course;
+import Entity.GradeList;
 import Entity.Section;
 
 import java.sql.DriverManager;
@@ -9,7 +10,9 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.sql.Connection;
 
 public class DBConnector {
@@ -121,7 +124,7 @@ public class DBConnector {
             return courses;
         }
 
-        String sql = "SELECT c.courseID, c.courseNum, c.courseName FROM Course c WHERE NOT EXISTS (SELECT 1 FROM Section s JOIN Enrollment e ON s.sectionID = e.sectionID WHERE s.courseID = c.courseID AND e.accountID = ?) AND (c.prereq IS NULL OR EXISTS (SELECT 1 FROM Section s2 JOIN Enrollment e2 ON s2.sectionID = e2.sectionID WHERE s2.courseID = c.prereq AND e2.accountID = ?))";
+        String sql = "SELECT c.courseID, c.courseNum, c.courseName, c.dept FROM Course c WHERE NOT EXISTS (SELECT 1 FROM Section s JOIN Enrollment e ON s.sectionID = e.sectionID WHERE s.courseID = c.courseID AND e.accountID = ?) AND (c.prereq IS NULL OR EXISTS (SELECT 1 FROM Section s2 JOIN Enrollment e2 ON s2.sectionID = e2.sectionID WHERE s2.courseID = c.prereq AND e2.accountID = ?))";
 
         try (PreparedStatement stmt = conn.prepareStatement(sql)) {
             stmt.setInt(1, currentAccountID);
@@ -132,10 +135,12 @@ public class DBConnector {
                 int courseID = rs.getInt("courseID");
                 int courseNum = rs.getInt("courseNum");
                 String courseName = rs.getString("courseName");
+                String dept = rs.getString("dept");
                 Course c = new Course();
                 c.setCourseID(courseID);
                 c.setCourseNum(courseNum);
                 c.setCourseName(courseName);
+                c.setDept(dept);
 
                 courses.add(c);
             }
@@ -152,7 +157,8 @@ public class DBConnector {
 
     public List<Section> getenrolledSections() {
         List<Section> enrolledSections = new ArrayList<>();
-        String sql = "SELECT s.sectionID, s.courseID, c.courseNum, c.courseName, s.time, s.location " +
+        String sql = "SELECT s.sectionID, s.courseID, c.courseNum, c.courseName, c.dept, " +
+                     "s.time, s.location " +
                      "FROM Section s " +
                      "JOIN Enrollment e ON s.sectionID = e.sectionID " +
                      "JOIN Course c ON s.courseID = c.courseID " +
@@ -167,6 +173,7 @@ public class DBConnector {
                 int courseID = rs.getInt("courseID");
                 int courseNum = rs.getInt("courseNum");
                 String courseName = rs.getString("courseName");
+                String dept = rs.getString("dept");
                 String time = rs.getString("time");
                 String location = rs.getString("location");
                 Section s = new Section();
@@ -174,6 +181,7 @@ public class DBConnector {
                 s.setCourseID(courseID);
                 s.setCourseNum(courseNum);
                 s.setCourseName(courseName);
+                s.setDept(dept);
                 s.setTime(time);
                 s.setLocation(location);
                 enrolledSections.add(s);
@@ -186,9 +194,9 @@ public class DBConnector {
 
     public List<Section> getSections(int courseID) {
         List<Section> sections = new ArrayList<>();
-        String sql = "SELECT sectionID, sectionLetter, time, location " +
-                    "FROM Section " +
-                    "WHERE courseID = ?";
+        String sql = "SELECT s.sectionID, s.sectionLetter, s.time, s.location, c.dept, c.courseNum " +
+                    "FROM Section s JOIN Course c ON s.courseID = c.courseID " +
+                    "WHERE s.courseID = ?";
 
         try (PreparedStatement stmt = conn.prepareStatement(sql)) {
             stmt.setInt(1, courseID);
@@ -199,11 +207,15 @@ public class DBConnector {
                 String letter = rs.getString("sectionLetter");
                 String time = rs.getString("time");
                 String location = rs.getString("location");
+                String dept = rs.getString("dept");
+                int courseNum = rs.getInt("courseNum");
                 Section s = new Section();
                 s.setSectionID(sectionID);
                 s.setSectionLetter(letter);
                 s.setTime(time);
                 s.setLocation(location);
+                s.setDept(dept);
+                s.setCourseNum(courseNum);
 
                 sections.add(s);
             }
@@ -218,10 +230,6 @@ public class DBConnector {
         return sections;
     }
 
-    // public List<Grade> getGrades(int courseID) {
-
-    // }
-
     public void registerStudentForSection(int accountID, int sectionID) {
         String sql = "INSERT INTO Enrollment (accountID, sectionID, status) VALUES (?, ?, ?)";
 
@@ -233,5 +241,150 @@ public class DBConnector {
         } catch (SQLException e) {
             e.printStackTrace();
         }
+    }
+
+    public List<GradeList> getGradesForSection(int sectionID) {
+        String sql =
+            "SELECT a.accountID, a.fname, a.lname, g.asgmtID, g.score, asg.name " +
+            "FROM Enrollment e " +
+            "JOIN Account a ON e.accountID = a.accountID " +
+            "LEFT JOIN Grade g ON g.accountID = a.accountID " +
+            "LEFT JOIN Assignment asg ON asg.asgmtID = g.asgmtID " +
+            "WHERE e.sectionID = ?";
+
+        List<GradeList> rows = new ArrayList<>();
+        Map<Integer, GradeList> map = new HashMap<>();
+
+        try (PreparedStatement ps = conn.prepareStatement(sql)) {
+            ps.setInt(1, sectionID);
+            ResultSet rs = ps.executeQuery();
+
+            while (rs.next()) {
+                int studentID = rs.getInt("accountID");
+                String studentName = rs.getString("fname") + " " + rs.getString("lname");
+
+                GradeList row = map.get(studentID);
+                if (row == null) {
+                    row = new GradeList(studentID, studentName);
+                    map.put(studentID, row);
+                    rows.add(row);
+                }
+
+                String asgmtName = rs.getString("name");
+                // handle numeric types robustly
+                Double score = null;
+                Object scoreObj = rs.getObject("score");
+                if (scoreObj != null) {
+                    if (scoreObj instanceof Number) {
+                        score = ((Number) scoreObj).doubleValue();
+                    } else {
+                        try {
+                            score = Double.parseDouble(scoreObj.toString());
+                        } catch (NumberFormatException ignored) {}
+                    }
+                }
+
+                if (asgmtName != null) {
+                    switch (asgmtName.toLowerCase()) {
+                        case "asgmt1":
+                            row.setAsgmt1(score);
+                            break;
+                        case "midterm":
+                            row.setMidterm(score);
+                            break;
+                        case "asgmt2":
+                            row.setAsgmt2(score);
+                            break;
+                        case "final":
+                            row.setFinal(score);
+                            break;
+                    }
+                }
+            }
+        } catch (SQLException ex) {
+            ex.printStackTrace();
+        }
+
+        return rows;
+    }
+
+    public void updateGrade(int studentID, int asgmtID, Double newScore) {
+        if (newScore == null) return;
+        String sql =
+            "INSERT INTO Grade (asgmtID, accountID, score) VALUES (?, ?, ?) " +
+            "ON CONFLICT(asgmtID, accountID) DO UPDATE SET score = excluded.score";
+
+        try (PreparedStatement ps = conn.prepareStatement(sql)) {
+            ps.setInt(1, asgmtID);
+            ps.setInt(2, studentID);
+            ps.setDouble(3, newScore);
+            ps.executeUpdate();
+        } catch (SQLException ex) {
+            ex.printStackTrace();
+        }
+    }
+
+    public Map<String, Integer> getAssignmentMap(int sectionID) {
+        String sql = "SELECT asgmtID, name FROM Assignment WHERE sectionID = ?";
+        Map<String, Integer> map = new HashMap<>();
+
+        try (PreparedStatement ps = conn.prepareStatement(sql)) {
+            ps.setInt(1, sectionID);
+            ResultSet rs = ps.executeQuery();
+
+            while (rs.next()) {
+                String name = rs.getString("name").toLowerCase();
+                int id = rs.getInt("asgmtID");
+                map.put(name, id);
+            }
+
+        } catch (SQLException ex) {
+            ex.printStackTrace();
+        }
+
+        return map;
+    }
+
+    public List<Section> getSectionsTaughtByTeacher() {
+        List<Section> sections = new ArrayList<>();
+        System.out.println(currentAccountID); // debugging
+
+        // debugging
+        if (currentAccountID == -1) {
+            System.err.println("getSectionsTaughtByTeacher method called before user login!");
+            return sections;
+        }
+
+        // EDIT THIS
+        String sql = "SELECT s.sectionID, s.courseID, s.sectionLetter, s.time, s.location, " +
+                     "s.status, c.courseNum, c.dept FROM Section s JOIN Course c ON " +
+                     "s.courseID = c.courseID WHERE s.profID = ?";
+
+        try (PreparedStatement stmt = conn.prepareStatement(sql)) {
+            stmt.setInt(1, currentAccountID);
+            ResultSet rs = stmt.executeQuery();
+
+            while (rs.next()) {
+                Section s = new Section();
+                s.setSectionID(rs.getInt("sectionID"));
+                s.setCourseID(rs.getInt("courseID"));
+                s.setSectionLetter(rs.getString("sectionLetter"));
+                s.setTime(rs.getString("time"));
+                s.setLocation(rs.getString("location"));
+                s.setStatus(rs.getString("status"));
+                s.setCourseNum(rs.getInt("courseNum"));
+                s.setDept(rs.getString("dept"));
+
+                sections.add(s);
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+        System.out.println("DEBUG: getSectionsTaughtByTeacher returned " + sections.size() + " sections for teacherID " + currentAccountID);
+        for (Section s : sections) {
+            System.out.println("  SectionID: " + s.getSectionID() + ", Letter: " + s.getSectionLetter() + ", Time: " + s.getTime() + ", Locaiton: " + s.getLocation());
+        }
+        return sections;
     }
 }

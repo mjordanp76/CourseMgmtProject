@@ -1,21 +1,18 @@
 package Boundary;
 
-import Control.SectionController;
 import Control.TeacherController;
-import Entity.Course;
 import Entity.Section;
-import Entity.Section;
-
-import java.util.List;
+import javafx.application.Platform;
 import javafx.collections.FXCollections;
-import javafx.scene.Node;
+import javafx.geometry.Pos;
 import javafx.scene.control.Button;
 import javafx.scene.control.TableCell;
-import javafx.scene.control.TableView;
 import javafx.scene.control.TableColumn;
+import javafx.scene.control.TableView;
 import javafx.scene.layout.VBox;
-import javafx.application.Platform;
 import javafx.util.Callback;
+
+import java.util.List;
 
 public class TeacherMenu {
 
@@ -29,6 +26,9 @@ public class TeacherMenu {
         this.teacherController = teacherController;
         builder = new TeacherMenuBuilder();
         sectionTable = builder.createSectionTable();
+
+        // ensure select column is set up right away (builder should create at least 3 cols)
+        setupSelectColumn();
     }
 
     public TableView<Section> getSectionTable() {
@@ -42,22 +42,34 @@ public class TeacherMenu {
     private void setupSelectColumn() {
         TableColumn<Section, Void> selectCol = (TableColumn<Section, Void>) sectionTable.getColumns().get(2);
 
-        selectCol.setCellFactory(col -> new TableCell<>() {
-            private final Button btn = new Button("Select");
-
+        selectCol.setCellFactory(new Callback<>() {
             @Override
-            protected void updateItem(Void item, boolean empty) {
-                super.updateItem(item, empty);
-                if (empty) {
-                    setGraphic(null);
-                } else {
-                    setGraphic(btn);
-                    btn.setOnAction(e -> {
-                        System.out.print("Clicked!");
-                        Section Section = getTableView().getItems().get(getIndex());
-                        teacherController.openRegistrationForm(Section);
-                    });
-                }
+            public TableCell<Section, Void> call(TableColumn<Section, Void> col) {
+                return new TableCell<>() {
+                    private final Button btn = new Button("Select");
+
+                    {
+                        btn.setOnAction(e -> {
+                            int idx = getIndex();
+                            if (idx >= 0 && idx < getTableView().getItems().size()) {
+                                Section section = getTableView().getItems().get(idx);
+                                // call the correct controller method
+                                teacherController.openClassView(section);
+                            }
+                        });
+                        setAlignment(Pos.CENTER);
+                    }
+
+                    @Override
+                    protected void updateItem(Void item, boolean empty) {
+                        super.updateItem(item, empty);
+                        if (empty) {
+                            setGraphic(null);
+                        } else {
+                            setGraphic(btn);
+                        }
+                    }
+                };
             }
         });
     }
@@ -67,7 +79,7 @@ public class TeacherMenu {
         Platform.runLater(this::setupSelectColumn);
     }
 
-    // Called by controller to refresh tables after registration
+    // Called by controller to refresh tables after registration/grade save
     public void updateTables(List<Section> teacherSections) {
         sectionTable.setItems(FXCollections.observableArrayList(teacherSections));
         Platform.runLater(this::setupSelectColumn);

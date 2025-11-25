@@ -50,7 +50,7 @@ public class StartController {
         // create all controllers
         loginControl = new LoginControl(null, db);
         courseController = new CourseController(null, db);
-        // teacherController = new TeacherController(db);
+        teacherController = new TeacherController(null, db);
 
         // create login form
         LoginForm loginForm = new LoginForm(loginControl, primaryStage, this);
@@ -77,16 +77,23 @@ public class StartController {
         // 2. Create the main menu wrapper
         MainMenu mainMenu = new MainMenu(builder, primaryStage);
 
-        // 3. Set the user's displayed name
+        // 3. Set the user's displayed name and major
         mainMenu.setName(account.getFullName());
 
         // 4. Create the student/teacher menu
         if (account.getRole().equals("teacher")) {
-            TeacherMenu teacherMenu = new TeacherMenu(mainMenu);
+            TeacherMenu teacherMenu = new TeacherMenu(mainMenu, teacherController);
+            teacherController.setTeacherMenu(teacherMenu);
+            // fetch data
+            List<Section> taughtCourSections = db.getSectionsTaughtByTeacher();
+            // populate table
+            teacherMenu.populateTables(taughtCourSections);
+            // show table
             mainMenu.showDashboardView(teacherMenu.getDashboardTables());
         } else {
             StudentMenu studentMenu = new StudentMenu(mainMenu, courseController);
             courseController.setStudentMenu(studentMenu);
+            builder.setDept(account.getDept());
 
             // Fetch data
             List<Course> availableCourses = db.getCourses();
@@ -105,8 +112,12 @@ public class StartController {
 
         // get button from main menu so controller can set logic
         Button logoutBtn = mainMenu.getLogoutButton();
-        courseController.setMainMenu(mainMenu);
-
+        if (account.getRole().equals("teacher")) {
+            teacherController.setMainMenu(mainMenu);
+        } else {
+            courseController.setMainMenu(mainMenu);
+        }
+        
         // logout button logic
         logoutBtn.setOnAction(e -> {
             // 1. Save logout in Session table
@@ -121,5 +132,4 @@ public class StartController {
             login.display();
         });
     }
-
 }

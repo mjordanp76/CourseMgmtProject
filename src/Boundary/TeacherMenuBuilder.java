@@ -11,6 +11,7 @@ import javafx.scene.control.TableCell;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.control.cell.PropertyValueFactory;
+import javafx.scene.control.cell.TextFieldTableCell;
 import javafx.scene.layout.VBox;
 import javafx.util.Callback;
 
@@ -23,7 +24,7 @@ public class TeacherMenuBuilder {
         dashboardVBox.setAlignment(Pos.TOP_CENTER);
     }
 
-    public VBox buildDashboard(TableView<Course> sectionTable) {
+    public VBox buildDashboard(TableView<Section> sectionTable) {
         // Wrap the table node in a VBox with a title
         Label tableTitle = new Label("My Courses");
         tableTitle.setStyle("-fx-font-size: 16; -fx-font-weight: bold;");
@@ -43,18 +44,34 @@ public class TeacherMenuBuilder {
     public TableView<Section> createSectionTable() {
         TableView<Section> table = new TableView<>();
 
-        TableColumn<Section, String> colCourseName = new TableColumn<>("Class Name");
-        TableColumn<Section, String> colCourseStatus = new TableColumn<>("Status");
-        TableColumn<Section, Void> colSelect = new TableColumn<>("View/Update");
+        TableColumn<Section, String> courseNameCol = new TableColumn<>("Class Name");
+        courseNameCol.setCellValueFactory(new PropertyValueFactory<>("courseAndSection"));
+        courseNameCol.setCellFactory(col -> {
+            TableCell<Section, String> cell = new TextFieldTableCell<>();
+            cell.setAlignment(Pos.CENTER);
+            return cell;
+        });
 
-        colCourseName.setPrefWidth(250);
-        colCourseStatus.setPrefWidth(250);
-        colSelect.setPrefWidth(250);
+        TableColumn<Section, String> courseStatusCol = new TableColumn<>("Status");
+        courseStatusCol.setCellValueFactory(new PropertyValueFactory<>("status"));
+        courseStatusCol.setCellFactory(col -> {
+            TableCell<Section, String> cell = new TextFieldTableCell<>();
+            cell.setAlignment(Pos.CENTER);
+            return cell;
+        });
 
-        colCourseName.setCellValueFactory(new PropertyValueFactory<>("courseNum"));
-        colCourseStatus.setCellValueFactory(new PropertyValueFactory<>("status"));
+        TableColumn<Section, Void> selectCol = new TableColumn<>("View/Update");
+        selectCol.setCellFactory(col -> {
+            TableCell<Section, Void> cell = new TextFieldTableCell<>();
+            cell.setAlignment(Pos.CENTER);
+            return cell;
+        });
 
-        table.getColumns().addAll(colCourseName, colCourseStatus, colSelect);
+        courseNameCol.setPrefWidth(250);
+        courseStatusCol.setPrefWidth(250);
+        selectCol.setPrefWidth(250);
+
+        table.getColumns().addAll(courseNameCol, courseStatusCol, selectCol);
         table.setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY);
         return table;
     }
