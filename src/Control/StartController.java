@@ -15,12 +15,9 @@ import Entity.Account;
 import Entity.Course;
 import Entity.Section;
 
-import javafx.collections.FXCollections;
 import javafx.scene.control.Button;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
-import javafx.scene.control.Label;
-import javafx.scene.layout.VBox;
 
 public class StartController {
 
@@ -29,8 +26,6 @@ public class StartController {
     private LoginControl loginControl;
     private CourseController courseController;
     private TeacherController teacherController;
-    private MainMenu mainMenu;
-    private MainMenuBuilder mainMenuBuilder;
 
     public StartController(Stage primaryStage, DBConnector db) {
         this.primaryStage = primaryStage;
@@ -71,16 +66,16 @@ public class StartController {
 
     public void loadMainMenu(Account account) {
 
-        // 1. Create the builder
+        // create the builder
         MainMenuBuilder builder = new MainMenuBuilder();
 
-        // 2. Create the main menu wrapper
+        // create the main menu wrapper
         MainMenu mainMenu = new MainMenu(builder, primaryStage);
 
-        // 3. Set the user's displayed name and major
+        // set the user's displayed name and major
         mainMenu.setName(account.getFullName());
 
-        // 4. Create the student/teacher menu
+        // create the student/teacher menu
         if (account.getRole().equals("teacher")) {
             TeacherMenu teacherMenu = new TeacherMenu(mainMenu, teacherController);
             teacherController.setTeacherMenu(teacherMenu);
@@ -95,18 +90,18 @@ public class StartController {
             courseController.setStudentMenu(studentMenu);
             builder.setDept(account.getDept());
 
-            // Fetch data
+            // fetch data
             List<Course> availableCourses = db.getCourses();
             List<Section> currentSchedule = db.getenrolledSections();
 
-            // Populate tables
+            // populate tables
             studentMenu.populateTables(availableCourses, currentSchedule);
 
-            // Show tables
+            // show tables
             mainMenu.showDashboardView(studentMenu.getDashboardTables());
         }
 
-        // 5. Display it on the stage
+        // display it on the stage
         Scene scene = new Scene(mainMenu.getRoot(), 1000, 800);
         primaryStage.setScene(scene);
 
@@ -120,14 +115,14 @@ public class StartController {
         
         // logout button logic
         logoutBtn.setOnAction(e -> {
-            // 1. Save logout in Session table
+            // save logout in Session table
             db.saveLogout(account.getAccountID(), "logout");;
 
-            // 2. Close the menu window
+            // close the menu window
             Stage stage = (Stage) logoutBtn.getScene().getWindow();
             stage.close();
 
-            // 3. Show the login popup again
+            // show the login popup again
             LoginForm login = new LoginForm(loginControl, primaryStage, this);
             login.display();
         });

@@ -38,7 +38,7 @@ public class TeacherController {
         this.accountID = id;
     }
 
-    // Open the class view popup for a given section
+    // open the class view popup for a given section
     public void openClassView(Section section) {
         List<GradeList> rows = db.getGradesForSection(section.getSectionID());
 

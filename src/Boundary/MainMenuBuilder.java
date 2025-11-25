@@ -63,8 +63,8 @@ public class MainMenuBuilder {
     // BUILD DASHBOARD VIEW
     // -----------------------------
     public void buildDashboard(Node tables) {
-        // Centered title + logout at top-right using StackPane
-        Label title = nameLabel; // your existing label
+        // centered title + logout at top-right using StackPane
+        Label title = nameLabel;
         Label major = deptLabel;
         title.setStyle("-fx-font-size: 24px; -fx-font-weight: bold;");
         major.setStyle("-fx-font-size: 20px;");
@@ -79,13 +79,13 @@ public class MainMenuBuilder {
         headerPane.setPadding(new Insets(10));
         headerPane.getChildren().addAll(titleBox, logout);
 
-        // Center the title, and anchor logout to the top-right
+        // center the title, and anchor logout to the top-right
         StackPane.setAlignment(titleBox, Pos.CENTER);
         StackPane.setAlignment(logout, Pos.TOP_RIGHT);
         // optional: give logout a small margin from the top-right edge
         StackPane.setMargin(logout, new Insets(0, 10, 0, 0));
 
-        // Body area (unchanged)
+        // body area
         subtitleLabel.setVisible(false);
         contentArea.getChildren().setAll(tables);
         VBox body = new VBox(20, subtitleLabel, contentArea);
@@ -101,16 +101,16 @@ public class MainMenuBuilder {
     // -----------------------------
     public void buildDetail(Node content, String subtitle) {
 
-        // Header only has name
+        // header only has name
         HBox header = new HBox(nameLabel);
         header.setAlignment(Pos.CENTER);
         header.setStyle("-fx-padding: 10;");
 
-        // Subtitle
+        // subtitle
         subtitleLabel.setText(subtitle);
         subtitleLabel.setVisible(true);
 
-        // Content
+        // content
         contentArea.getChildren().setAll(content);
 
         VBox body = new VBox(20, subtitleLabel, contentArea);

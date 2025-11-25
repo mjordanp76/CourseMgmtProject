@@ -1,12 +1,9 @@
 package Boundary;
 
-import Entity.Course;
-import Entity.GradeList;
 import Entity.Section;
 
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
-import javafx.scene.Node;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.control.cell.TextFieldTableCell;
 import javafx.scene.control.Button;
@@ -15,7 +12,6 @@ import javafx.scene.control.TableCell;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.layout.VBox;
-import javafx.util.Callback;
 
 public class RegistrationFormBuilder {
 
@@ -35,12 +31,9 @@ public class RegistrationFormBuilder {
         descriptionLabel = new Label();
 
         courseDescription = new Label();
-
-        //tableView = new TableView<>();
     }
 
     public VBox buildForm(String title, String description, TableView<Section> table) {
-        // rootVBox.getChildren().addAll(table);
 
         tableTitleLabel.setText(title);
         descriptionLabel.setText("Course Description");
@@ -50,18 +43,6 @@ public class RegistrationFormBuilder {
         courseDescription.setWrapText(true);
         courseDescription.setMaxWidth(700);
         courseDescription.setStyle("-fx-font-size: 18px; -fx-text-alignment: center;");
-
-        // // --- Build table columns ---
-        // TableColumn<Section, String> colSection = new TableColumn<>("Section");
-        // TableColumn<Section, String> colTime = new TableColumn<>("Time");
-        // TableColumn<Section, String> colLocation = new TableColumn<>("Location");
-        // TableColumn<Section, Void> colRegister = new TableColumn<>("");
-
-        // // Equal widths for simplicity
-        // colSection.setPrefWidth(179);
-        // colTime.setPrefWidth(270);
-        // colLocation.setPrefWidth(270);
-        // colRegister.setPrefWidth(179);
 
         rootVBox.getChildren().setAll(tableTitleLabel, descriptionLabel, courseDescription, table);
 
@@ -134,7 +115,7 @@ public class RegistrationFormBuilder {
         return table;
     }
 
-    // Getters for potential future use
+    // getters for potential future use
     public TableView<Section> getTableView() {
         return tableView;
     }

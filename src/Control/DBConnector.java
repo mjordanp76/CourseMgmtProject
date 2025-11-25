@@ -355,7 +355,6 @@ public class DBConnector {
             return sections;
         }
 
-        // EDIT THIS
         String sql = "SELECT s.sectionID, s.courseID, s.profID, s.sectionLetter, s.time, s.location, " +
                      "s.status, c.courseNum, c.dept FROM Section s JOIN Course c ON " +
                      "s.courseID = c.courseID WHERE s.profID = ?";

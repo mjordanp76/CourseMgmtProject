@@ -79,7 +79,7 @@ public class TeacherMenu {
         Platform.runLater(this::setupSelectColumn);
     }
 
-    // Called by controller to refresh tables after registration/grade save
+    // called by controller to refresh tables after registration/grade save
     public void updateTables(List<Section> teacherSections) {
         sectionTable.setItems(FXCollections.observableArrayList(teacherSections));
         Platform.runLater(this::setupSelectColumn);

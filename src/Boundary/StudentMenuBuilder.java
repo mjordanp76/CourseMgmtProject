@@ -5,8 +5,6 @@ import Entity.Section;
 
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
-import javafx.scene.Node;
-import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.TableCell;
 import javafx.scene.control.TableColumn;
@@ -14,7 +12,6 @@ import javafx.scene.control.TableView;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.control.cell.TextFieldTableCell;
 import javafx.scene.layout.VBox;
-import javafx.util.Callback;
 
 public class StudentMenuBuilder {
 
@@ -26,14 +23,14 @@ public class StudentMenuBuilder {
     }
 
     public VBox buildDashboard(TableView<Course> courseTable, TableView<Section> enrolledTable) {
-        // Wrap the first table node in a VBox with a title
+        // wrap the first table node in a VBox with a title
         Label table1Title = new Label("Available Courses");
         table1Title.setStyle("-fx-font-size: 16px; -fx-font-weight: bold;");
         VBox table1Box = new VBox(5, table1Title, courseTable);
         table1Box.setAlignment(Pos.TOP_CENTER);
         table1Box.setMaxWidth(900);
 
-        // Wrap the second table node in a VBox with a title
+        // wrap the second table node in a VBox with a title
         Label table2Title = new Label("Enrolled Courses");
         table2Title.setStyle("-fx-font-size: 16px; -fx-font-weight: bold;");
         VBox table2Box = new VBox(5, table2Title, enrolledTable);
@@ -50,7 +47,7 @@ public class StudentMenuBuilder {
         return dashboardVBox;
     }
 
-    // Helper method to create the first table with "Select" buttons
+    // helper method to create the first table with "Select" buttons
     public TableView<Course> createCourseTable() {
         TableView<Course> table = new TableView<>();
         table.setStyle("-fx-font-size: 16px;");
@@ -83,11 +80,10 @@ public class StudentMenuBuilder {
         colSelect.setPrefWidth(199);
 
         table.getColumns().addAll(colCourseNumber, colCourseName, colSelect);
-        //table.setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY);
         return table;
     }
 
-    // Helper method to create the second table (no buttons yet)
+    // helper method to create the second table (no buttons yet)
     public TableView<Section> createEnrolledTable() {
         TableView<Section> table = new TableView<>();
         table.setStyle("-fx-font-size: 16px;");

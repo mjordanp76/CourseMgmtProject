@@ -5,9 +5,7 @@ import Entity.Section;
 import java.util.List;
 import java.util.function.Consumer;
 import javafx.collections.FXCollections;
-import javafx.scene.Node;
 import javafx.scene.Parent;
-import javafx.scene.control.Button;
 import javafx.scene.control.TableView;
 
 public class RegistrationForm {
@@ -15,11 +13,9 @@ public class RegistrationForm {
     private Consumer<Section> onRegister;
     private RegistrationFormBuilder builder;
     private TableView<Section> sectionTable;
-    private Button registerButton;
 
     public RegistrationForm() {
         builder = new RegistrationFormBuilder();
-        // sectionTable = builder.createSectionTable();
     }
 
     public Parent display(String title, String description) {
@@ -44,7 +40,7 @@ public class RegistrationForm {
         this.onRegister = handler;
     }
 
-    // Optional getters if you need to attach listeners later
+    // optional getters if you need to attach listeners later
     public RegistrationFormBuilder getBuilder() {
         return builder;
     }

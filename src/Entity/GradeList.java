@@ -5,7 +5,7 @@ public class GradeList {
     private int studentID;
     private String studentName; // fname + lname from Account
 
-    // These map to specific assignments in the section
+    // these map to specific assignments in the section
     private Double assignment1;
     private Double midterm;
     private Double assignment2;

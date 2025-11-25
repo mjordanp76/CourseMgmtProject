@@ -6,7 +6,6 @@ import Entity.Section;
 
 import javafx.collections.FXCollections;
 import javafx.geometry.Pos;
-import javafx.scene.Node;
 import javafx.scene.control.Button;
 import javafx.scene.control.TableCell;
 import javafx.scene.control.TableColumn;
@@ -75,7 +74,7 @@ public class StudentMenu {
         Platform.runLater(this::setupSelectColumn);
     }
 
-    // Called by controller to refresh tables after registration
+    // called by controller to refresh tables after registration
     public void updateTables(List<Course> availableCourses, List<Section> enrolledSections) {
         courseTable.setItems(FXCollections.observableArrayList(availableCourses));
         enrolledTable.setItems(FXCollections.observableArrayList(enrolledSections));

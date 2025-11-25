@@ -28,7 +28,7 @@ public class ClassView {
         table.setMaxWidth(840);
         table.setStyle("-fx-font-size: 16px;");
 
-        // --- Table Columns (unchanged) ---
+        // table Columns
         TableColumn<GradeList, String> nameCol = new TableColumn<>("Student");
         nameCol.setCellValueFactory(new PropertyValueFactory<>("studentName"));
         nameCol.setEditable(false);
@@ -94,7 +94,7 @@ public class ClassView {
         table.getColumns().addAll(nameCol, a1Col, midCol, a2Col, finalCol, totalCol);
         table.setEditable(true);
 
-        // --- Header VBox for course & teacher names ---
+        // header VBox for course & teacher names
         Label courseLabel = new Label(courseName);
         courseLabel.setStyle("-fx-font-size: 18px; -fx-font-weight: bold;");
         Label teacherLabel = new Label(teacherName);
@@ -102,7 +102,7 @@ public class ClassView {
         VBox headerBox = new VBox(5, courseLabel, teacherLabel);
         headerBox.setAlignment(Pos.CENTER);
 
-        // --- Save button aligned right ---
+        // save button aligned right
         Button saveBtn = new Button("Submit");
         saveBtn.setOnAction(e -> {
             if (onSave != null) onSave.accept(new ArrayList<>(table.getItems()));
@@ -112,7 +112,7 @@ public class ClassView {
         buttonBox.setAlignment(Pos.CENTER_RIGHT);
         buttonBox.setPadding(new Insets(10, 0, 0, 0)); // optional top padding
 
-        // --- Root VBox ---
+        // root VBox
         VBox root = new VBox(10, headerBox, table, buttonBox);
         root.setPadding(new Insets(10));
 

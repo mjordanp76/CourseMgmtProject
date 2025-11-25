@@ -6,8 +6,6 @@ import Boundary.StudentMenu;
 import Entity.Course;
 import Entity.Section;
 
-import javafx.collections.FXCollections;
-import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.stage.Modality;
@@ -25,16 +23,13 @@ public class CourseController {
     public CourseController(MainMenu mainMenu, DBConnector db) {
         this.mainMenu = mainMenu;
         this.db = db;
-
-        // Connect the menu's select button to this controller
-        // studentMenu.setOnCourseSelected(this::openRegistrationForm);
     }
 
     public void setStudentMenu(StudentMenu studentMenu) {
         this.studentMenu = studentMenu;
     }
 
-    // StartController makes courseController before mainMenu, so this injects mainMenu later
+    // startController makes courseController before mainMenu, so this injects mainMenu later
     public void setMainMenu(MainMenu mainMenu) {
         this.mainMenu = mainMenu;
     }
@@ -48,7 +43,7 @@ public class CourseController {
         setAccountID(accountID);
         System.out.println("accountID = " + accountID);
 
-        // 1. Get sections from db
+        // get sections from db
         List<Section> sections = db.getSections(course.getCourseID());
         System.out.println("Sections loaded: " + sections.size());
 
@@ -56,7 +51,7 @@ public class CourseController {
         int id = course.getCourseID();
         String description = db.getCourseDescription(id);
 
-        // 2. Create RegistrationForm pop-up
+        // create RegistrationForm pop-up
         RegistrationForm regForm = new RegistrationForm();
         Parent formRoot = regForm.display(course.getCourseName(), description);
         formRoot.setUserData(regForm);
@@ -71,16 +66,16 @@ public class CourseController {
         regForm.fillTable(sections);
         System.out.println("Table filled");
 
-        // 3. Set up Register button callback
+        // set up Register button callback
         regForm.setOnRegister(section -> {
             System.out.println("Register clicked!");
-            // Insert registration via db
+            // insert registration via db
             db.registerStudentForSection(accountID, section.getSectionID());
 
-            // Close pop-up
+            // close pop-up
             popUp.close();
 
-            // Refresh main menu tables
+            // refresh main menu tables
             List<Course> newAvailable = db.getCourses();
             List<Section> newEnrolled = db.getenrolledSections();
             studentMenu.updateTables(newAvailable, newEnrolled);
