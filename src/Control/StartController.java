@@ -107,7 +107,7 @@ public class StartController {
         }
 
         // 5. Display it on the stage
-        Scene scene = new Scene(mainMenu.getRoot(), 800, 600);
+        Scene scene = new Scene(mainMenu.getRoot(), 1000, 800);
         primaryStage.setScene(scene);
 
         // get button from main menu so controller can set logic

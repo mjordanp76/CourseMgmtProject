@@ -30,6 +30,7 @@ public class TeacherMenuBuilder {
         tableTitle.setStyle("-fx-font-size: 16; -fx-font-weight: bold;");
         VBox tableBox = new VBox(5, tableTitle, sectionTable);
         tableBox.setAlignment(Pos.TOP_CENTER);
+        tableBox.setMaxWidth(900);
 
         dashboardVBox.getChildren().setAll(tableBox);
 
@@ -43,6 +44,7 @@ public class TeacherMenuBuilder {
     // Helper method to create the first table with "Select" buttons
     public TableView<Section> createSectionTable() {
         TableView<Section> table = new TableView<>();
+        table.setStyle("-fx-font-size: 16px;");
 
         TableColumn<Section, String> courseNameCol = new TableColumn<>("Class Name");
         courseNameCol.setCellValueFactory(new PropertyValueFactory<>("courseAndSection"));

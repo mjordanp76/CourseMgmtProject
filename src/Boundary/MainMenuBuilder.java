@@ -66,8 +66,8 @@ public class MainMenuBuilder {
         // Centered title + logout at top-right using StackPane
         Label title = nameLabel; // your existing label
         Label major = deptLabel;
-        title.setStyle("-fx-font-size: 20px; -fx-font-weight: bold;");
-        major.setStyle("-fx-font-size: 18px;");
+        title.setStyle("-fx-font-size: 24px; -fx-font-weight: bold;");
+        major.setStyle("-fx-font-size: 20px;");
 
         VBox titleBox = new VBox(title, major);
         titleBox.setAlignment(Pos.CENTER);

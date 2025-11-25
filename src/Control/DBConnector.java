@@ -356,7 +356,7 @@ public class DBConnector {
         }
 
         // EDIT THIS
-        String sql = "SELECT s.sectionID, s.courseID, s.sectionLetter, s.time, s.location, " +
+        String sql = "SELECT s.sectionID, s.courseID, s.profID, s.sectionLetter, s.time, s.location, " +
                      "s.status, c.courseNum, c.dept FROM Section s JOIN Course c ON " +
                      "s.courseID = c.courseID WHERE s.profID = ?";
 
@@ -368,6 +368,7 @@ public class DBConnector {
                 Section s = new Section();
                 s.setSectionID(rs.getInt("sectionID"));
                 s.setCourseID(rs.getInt("courseID"));
+                s.setProfID(rs.getInt("profID"));
                 s.setSectionLetter(rs.getString("sectionLetter"));
                 s.setTime(rs.getString("time"));
                 s.setLocation(rs.getString("location"));
@@ -386,5 +387,56 @@ public class DBConnector {
             System.out.println("  SectionID: " + s.getSectionID() + ", Letter: " + s.getSectionLetter() + ", Time: " + s.getTime() + ", Locaiton: " + s.getLocation());
         }
         return sections;
+    }
+
+    public String getCourseName(int courseID) {
+        String sql = "SELECT courseName FROM Course WHERE courseID = ?";
+        try (PreparedStatement stmt = conn.prepareStatement(sql)) {
+            stmt.setInt(1, courseID);
+
+            try (ResultSet rs = stmt.executeQuery()) {
+                if (rs.next()) {
+                    return rs.getString("courseName");
+                }
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return null; // or return "Unknown Course";
+    }
+
+    public String getTeacherName(int profID) {
+        String sql = "SELECT fname, lname FROM Account WHERE accountID = ?";
+        try (PreparedStatement stmt = conn.prepareStatement(sql)) {
+            stmt.setInt(1, profID);
+
+            try (ResultSet rs = stmt.executeQuery()) {
+                if (rs.next()) {
+                    String first = rs.getString("fname");
+                    String last = rs.getString("lname");
+                    return first + " " + last;
+                }
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return null; // or return "Unknown Teacher";
+    }
+
+    public String getCourseDescription(int courseID) {
+        String sql = "SELECT description FROM Description WHERE courseID = ?";
+        
+        try (PreparedStatement stmt = conn.prepareStatement(sql)) {
+            stmt.setInt(1, courseID);
+            ResultSet rs = stmt.executeQuery();
+            
+            if (rs.next()) {
+                return rs.getString("description");
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        
+        return null; // no description found
     }
 }

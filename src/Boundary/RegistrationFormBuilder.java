@@ -4,6 +4,7 @@ import Entity.Course;
 import Entity.GradeList;
 import Entity.Section;
 
+import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Node;
 import javafx.scene.control.cell.PropertyValueFactory;
@@ -20,7 +21,8 @@ public class RegistrationFormBuilder {
 
     private VBox rootVBox;
     private Label tableTitleLabel;
-    private Label tableDescriptionLabel;
+    private Label descriptionLabel;
+    private Label courseDescription;
     private TableView<Section> tableView;
 
     public RegistrationFormBuilder() {
@@ -28,10 +30,11 @@ public class RegistrationFormBuilder {
         rootVBox.setAlignment(Pos.TOP_CENTER);
 
         tableTitleLabel = new Label();
-        tableTitleLabel.setStyle("-fx-font-size: 16; -fx-font-weight: bold;");
+        tableTitleLabel.setStyle("-fx-font-size: 24px; -fx-font-weight: bold;");
 
-        tableDescriptionLabel = new Label();
-        tableDescriptionLabel.setStyle("-fx-font-size: 14;");
+        descriptionLabel = new Label();
+
+        courseDescription = new Label();
 
         //tableView = new TableView<>();
     }
@@ -40,27 +43,35 @@ public class RegistrationFormBuilder {
         // rootVBox.getChildren().addAll(table);
 
         tableTitleLabel.setText(title);
-        tableDescriptionLabel.setText(description);
+        descriptionLabel.setText("Course Description");
+        descriptionLabel.setStyle("-fx-font-size: 18px; -fx-font-weight: bold;");
+        VBox.setMargin(descriptionLabel, new Insets(20, 0, 0, 0));
+        courseDescription.setText(description);
+        courseDescription.setWrapText(true);
+        courseDescription.setMaxWidth(700);
+        courseDescription.setStyle("-fx-font-size: 18px; -fx-text-alignment: center;");
 
-        // --- Build table columns ---
-        TableColumn<Section, String> colSection = new TableColumn<>("Section");
-        TableColumn<Section, String> colTime = new TableColumn<>("Time");
-        TableColumn<Section, String> colLocation = new TableColumn<>("Location");
-        TableColumn<Section, Void> colRegister = new TableColumn<>("");
+        // // --- Build table columns ---
+        // TableColumn<Section, String> colSection = new TableColumn<>("Section");
+        // TableColumn<Section, String> colTime = new TableColumn<>("Time");
+        // TableColumn<Section, String> colLocation = new TableColumn<>("Location");
+        // TableColumn<Section, Void> colRegister = new TableColumn<>("");
 
-        // Equal widths for simplicity
-        colSection.setPrefWidth(150);
-        colTime.setPrefWidth(150);
-        colLocation.setPrefWidth(150);
-        colRegister.setPrefWidth(150);
+        // // Equal widths for simplicity
+        // colSection.setPrefWidth(179);
+        // colTime.setPrefWidth(270);
+        // colLocation.setPrefWidth(270);
+        // colRegister.setPrefWidth(179);
 
-        rootVBox.getChildren().setAll(tableTitleLabel, tableDescriptionLabel, table);
+        rootVBox.getChildren().setAll(tableTitleLabel, descriptionLabel, courseDescription, table);
 
         return rootVBox;
     }
 
     public TableView<Section> createSectionTable() {
         TableView<Section> table = new TableView<>();
+        table.setStyle("-fx-font-size: 16px;");
+        table.setMaxWidth(820);
 
         TableColumn<Section, String> letterCol = new TableColumn<>("Section");
         letterCol.setCellValueFactory(new PropertyValueFactory<>("courseAndSection"));
@@ -114,13 +125,12 @@ public class RegistrationFormBuilder {
             }
         });
 
-        letterCol.setPrefWidth(150);
-        timeCol.setPrefWidth(250);
-        locationCol.setPrefWidth(250);
-        regCol.setPrefWidth(150);
+        letterCol.setPrefWidth(149);
+        timeCol.setPrefWidth(260);
+        locationCol.setPrefWidth(260);
+        regCol.setPrefWidth(149);
 
         table.getColumns().addAll(letterCol, timeCol, locationCol, regCol);
-        table.setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY);
         return table;
     }
 
@@ -134,6 +144,6 @@ public class RegistrationFormBuilder {
     }
 
     public Label getDescriptionLabel() {
-        return tableDescriptionLabel;
+        return courseDescription;
     }
 }

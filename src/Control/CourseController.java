@@ -52,8 +52,9 @@ public class CourseController {
         List<Section> sections = db.getSections(course.getCourseID());
         System.out.println("Sections loaded: " + sections.size());
 
-        // dummy course description
-        String description = "This class will rock your world!";
+        // fetchcourse description
+        int id = course.getCourseID();
+        String description = db.getCourseDescription(id);
 
         // 2. Create RegistrationForm pop-up
         RegistrationForm regForm = new RegistrationForm();
@@ -85,7 +86,7 @@ public class CourseController {
             studentMenu.updateTables(newAvailable, newEnrolled);
         });
 
-        popUp.setScene(new Scene(formRoot, 700, 700));
+        popUp.setScene(new Scene(formRoot, 900, 720));
 
         System.out.println("Showing popup...");
         popUp.showAndWait();

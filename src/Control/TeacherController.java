@@ -42,12 +42,15 @@ public class TeacherController {
     public void openClassView(Section section) {
         List<GradeList> rows = db.getGradesForSection(section.getSectionID());
 
+        String courseName = db.getCourseName(section.getCourseID());
+        String teacherName = db.getTeacherName(section.getProfID());
+
         ClassView cv = new ClassView();
-        Parent root = cv.display("Class View", "Grades for this section");
+        Parent root = cv.display(courseName, teacherName);
         Stage popup = new Stage();
         popup.initOwner(mainMenu.getStage());
         popup.initModality(Modality.APPLICATION_MODAL);
-        popup.setTitle("Grades — " + section.getSectionLetter());
+        popup.setTitle("Grades — " + section.getCourseNum() + " " + section.getSectionLetter());
         cv.fillTable(rows);
 
         // map assignment name -> asgmtID
@@ -77,7 +80,7 @@ public class TeacherController {
             }
         });
 
-        popup.setScene(new Scene(root, 800, 600));
+        popup.setScene(new Scene(root, 900, 600));
         popup.showAndWait();
     }
 }
